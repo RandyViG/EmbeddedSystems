@@ -2,15 +2,23 @@
 #include<stdlib.h>
 #include<unistd.h>
 #include<string.h>
+#include<signal.h>
 #include<sys/socket.h>
 #include<netinet/in.h>
+#include<sys/wait.h>
+#include<sys/types.h>
 
 #define PUERTO 5000
 #define COLA_CLIENTES 5
 #define TAM_BUFFER 100
+#define EVER 1
+
+int sockfd;
+
+void manjeador( int sig );
 
 int main(int argc, char **argv){
-	int sockfd, cliente_sockfd;
+	int cliente_sockfd;
 	struct sockaddr_in direccion_servidor;
 	char leer_mensaje[TAM_BUFFER];
 	pid_t pid;
@@ -20,6 +28,14 @@ int main(int argc, char **argv){
 	direccion_servidor.sin_port = htons(PUERTO);
 	direccion_servidor.sin_addr.s_addr = INADDR_ANY;
 
+	if( signal( SIGCHLD, manjeador ) == SIG_ERR ){
+		perror("Error en el manejador");
+		exit( EXIT_FAILURE );
+	}
+	if( signal( SIGINT, manjeador ) == SIG_ERR ){
+		perror("Error en el manejador");
+		exit( EXIT_FAILURE );
+	}
 	printf("Creando Socket ....\n");
 	if( ( sockfd = socket(AF_INET, SOCK_STREAM, 0) ) < 0 ){
 		perror("Ocurrio un problema en la creacion del socket\n");
@@ -29,7 +45,7 @@ int main(int argc, char **argv){
 	printf("Configurando socket ...\n");
 	if( bind( sockfd, (struct sockaddr *)&direccion_servidor, sizeof(direccion_servidor) ) < 0 ){
 		perror ("Ocurrio un problema al configurar el socket\n");
-		exit(1EXIT_FAILURE );
+		exit(EXIT_FAILURE );
 	}
 	
 	printf("Estableciendo la aceptacion de clientes...\n");
@@ -38,7 +54,7 @@ int main(int argc, char **argv){
 		exit( EXIT_FAILURE );
 	}
 
-	while( 1 ){
+	for( ; EVER ;  ){
 		printf("En espera de peticiones de conexión ...\n");
 		if( ( cliente_sockfd = accept(sockfd, NULL, NULL) ) < 0 ){
 			perror("Ocurrio algun problema al atender a un cliente");
@@ -56,13 +72,28 @@ int main(int argc, char **argv){
 				perror("Ocurrio un problema en el envio de un mensaje al cliente");
 				exit( EXIT_FAILURE );
 			}	
-
 			close( cliente_sockfd );
 			exit( 0 );
 		}
 	}
-	printf("Concluimos la ejecución de la aplicacion Servidor \n");
-	close( sockfd );
 
 	return 0;
 }
+
+void manjeador( int sig ){
+	int estado;
+	pid_t pid;
+
+	if( sig == SIGCHLD ){
+		printf("Se recibio la señal SIGCHLD en el servidor\n");
+		pid = wait(&estado);
+		printf("Termino el proceso: %d con estado: %d\n", pid, estado>>8);
+	}
+	else if( sig == SIGINT ){
+		printf("Se recibio la señal SIGINT en el servidor\n");
+		printf("Concluimos la ejecución de la aplicacion Servidor \n");
+		close( sockfd );
+		exit( 0 );
+	}
+}
+

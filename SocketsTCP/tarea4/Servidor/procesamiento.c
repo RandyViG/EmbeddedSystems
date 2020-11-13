@@ -4,29 +4,60 @@
 #include"archivos.h"
 
 void obtener_datos( char * mensaje ){
-	char time[10], latitude[11], longitude[12], n_s, e_w, aux[100];
-	leer_archivo( aux, "nmea.txt" );
-	sscanf(aux, "%*7s%9s%*1s%10s%*1s%c%*1s%11s%*1s%c", time, latitude, &n_s,longitude, &e_w);
-	sprintf(mensaje,"time:%s latitude:%s N/S:%c longitude:%s E/W:%c",time, latitude, n_s, longitude, e_w);
-}
+	int register i = 0;
+	char time[10], latitude[11], longitude[12], n_s=45, e_w=45, aux[100], *ptr;
+	memset( time, 0, 10);
+	memset( latitude, 0, 11);
+	memset( longitude, 0, 12);
+	memset( time, 42, 3);
+	memset( latitude, 42, 3);
+	memset( longitude, 42, 3);
 
-void datos( char * mensaje ){
-	int register i;
-	char time[10], latitude[11], longitude[12], n_s, e_w, aux[100], *ptr;
 	leer_archivo( aux, "nmea.txt" );
-	ptr = strtok( aux, ",");
-	for( i = 0 ; i < 5 ; i++ ){
-		ptr = strtok( NULL, ",");
-		if( i == 0 )
-			memcpy( time, ptr, 10 );
-		else if( i == 1 )
-			memcpy( latitude, ptr, 11 );
-		else if( i == 2 )
-			memcpy( &n_s, ptr, 1 );
-		else if( i == 3 )
-			memcpy( longitude, ptr, 12 );
-		else
-			memcpy( &e_w, ptr, 1 );
+
+	if( strlen(aux) == 74 )
+		sscanf(aux, "%*7s%9s%*1s%10s%*1s%c%*1s%11s%*1s%c", time, latitude, &n_s,longitude, &e_w);
+	else{
+		ptr = aux + 6; 
+		for( i = 0 ; i < 5 ; i++ ){
+			if( i == 0 ){
+				if( *( ptr + 1 ) != 44 ){
+					memcpy( time, ptr + 7 , 9 );
+					ptr += 16;
+				}
+				else
+					ptr += 1;
+			}
+			else if( i == 1 ){
+				if( *(ptr+1) != 44 ){
+					memcpy( latitude, ptr + 1, 10 );
+					ptr += 10;
+				}
+				else
+					ptr += 1;
+			}
+			else if( i == 2 ){
+				if( *(ptr+1) != 44 ){
+					memcpy( &n_s, ptr + 1 , 1 );
+					ptr += 2;
+				}
+				else
+					ptr += 1;
+			}
+			else if( i == 3 ){
+				if( *(ptr+1) != 44 ){
+					memcpy( longitude, ptr + 1 , 11 );
+					ptr += 12;
+				}
+				else
+					ptr += 1;
+			}
+			else if( i == 4 ){
+				if( *(ptr+1) != 44 )
+					memcpy( &e_w, ptr + 1, 1 );
+			}
+		}
 	}
+
 	sprintf(mensaje,"time:%s latitude:%s N/S:%c longitude:%s E/W:%c",time, latitude, n_s, longitude, e_w);
 }

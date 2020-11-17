@@ -5,7 +5,7 @@
 
 void obtener_datos( char * mensaje ){
 	int register i = 0;
-	char time[10], latitude[11], longitude[12], n_s=45, e_w=45, aux[100], *ptr;
+	char time[10], latitude[11], longitude[12], n_s=42, e_w=42, aux[100], *ptr;
 	memset( time, 0, 10);
 	memset( latitude, 0, 11);
 	memset( longitude, 0, 12);
@@ -21,41 +21,29 @@ void obtener_datos( char * mensaje ){
 		ptr = aux + 6; 
 		for( i = 0 ; i < 5 ; i++ ){
 			if( i == 0 ){
-				if( *( ptr + 1 ) != 44 ){
+				if( *(ptr+1) != 44 ){
 					memcpy( time, ptr + 7 , 9 );
-					ptr += 16;
+					ptr += 15;
 				}
-				else
-					ptr += 1;
-			}
-			else if( i == 1 ){
+			} else if( i == 1 ){
 				if( *(ptr+1) != 44 ){
 					memcpy( latitude, ptr + 1, 10 );
-					ptr += 10;
+					ptr += 9;
 				}
-				else
-					ptr += 1;
-			}
-			else if( i == 2 ){
+			} else if( i == 2 ) {
 				if( *(ptr+1) != 44 ){
 					memcpy( &n_s, ptr + 1 , 1 );
-					ptr += 2;
-				}
-				else
 					ptr += 1;
-			}
-			else if( i == 3 ){
+				}
+			} else if( i == 3 ){
 				if( *(ptr+1) != 44 ){
 					memcpy( longitude, ptr + 1 , 11 );
-					ptr += 12;
+					ptr += 11;
 				}
-				else
-					ptr += 1;
-			}
-			else if( i == 4 ){
+			} else if( i == 4 )
 				if( *(ptr+1) != 44 )
 					memcpy( &e_w, ptr + 1, 1 );
-			}
+			ptr += 1;
 		}
 	}
 

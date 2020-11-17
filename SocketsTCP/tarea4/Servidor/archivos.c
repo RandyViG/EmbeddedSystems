@@ -12,6 +12,7 @@ void guardar_archivo( char *datos, char *archivo){
 		exit(EXIT_FAILURE);
 	}
 	fprintf(apArch, "%s\n",datos);
+	fclose( apArch );
 }
 
 void leer_archivo( char *datos, char *archivo ){
@@ -25,4 +26,5 @@ void leer_archivo( char *datos, char *archivo ){
 	while( fscanf(apArch, "%s", datos) != EOF )
 		if( !strncmp( "$GPGGA", datos, 6 ) )
 			break;
+	fclose( apArch );
 }

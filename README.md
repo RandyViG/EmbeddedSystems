@@ -5,6 +5,7 @@
 Este repositorio contiene los códigos, prácticas elaborados en la materia *Embedded Systems* donde se enseña como programar un System on Chip (SoC) basado en un procesador ARM con sistema operativo linux. 
 
 **SoC: Raspberry PI**
+
 **Lenguaje de Programación: C**
 
 ##Prácticas

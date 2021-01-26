@@ -11,7 +11,6 @@ void ini_demonio(){
 	FILE *apArch;
    pid_t pid = 0;
    pid_t sid = 0;
-   int cont = 0;
     
 	pid = fork();
    if( pid == -1 ){

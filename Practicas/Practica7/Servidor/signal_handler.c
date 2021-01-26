@@ -6,7 +6,7 @@
 #include<pthread.h>
 #include<sys/wait.h>
 
-extern int escribir, leer;
+extern int fin, escribir, leer;
 extern pthread_t tid;
 
 void manejador( int sig ){
@@ -23,9 +23,9 @@ void manejador( int sig ){
 		syslog( LOG_INFO, "\nSe recibio la señal SIGUSR1 en el servidor\n");
 		escribir = 1;
 	}
-	else if( sig == SIGINT || sig == SIGTERM ){
+	else if( sig == SIGINT ){
 		syslog( LOG_INFO, "\nSe recibio la señal SIGINT en el servidor\n");
-		printf("Concluimos la ejecución de la aplicacion Servidor \n");
+		syslog( LOG_INFO, "Concluimos la ejecución de la aplicacion Servidor \n");
 		leer = 0;
 		fin = 1;
 		closelog();
@@ -42,10 +42,6 @@ void ini_signals( void ){
 		exit( EXIT_FAILURE );
 	}
 	if( signal( SIGUSR1, manejador) == SIG_ERR ){
-		syslog( LOG_ERR, "Error en el manejador\n");
-		exit( EXIT_FAILURE );
-	}
-	if( signal( SIGTERM, manejador) == SIG_ERR ){
 		syslog( LOG_ERR, "Error en el manejador\n");
 		exit( EXIT_FAILURE );
 	}

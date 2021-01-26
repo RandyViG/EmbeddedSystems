@@ -4,7 +4,7 @@ DESTDIR=/usr/local/bin
 DAEMONDIR=/etc/systemd/system
 DAEMON_SCRIPT=servidor_rtcc.service
 CFLAGS=-Wall
-LFLAGS=-lm -lpthread
+LFLAGS=-lm -lpthread -lwiringPi
 CC=gcc
 
 all: $(PROYECTO)
@@ -27,8 +27,11 @@ uninstall:
 	sudo rm $(DESTDIR)/$(PROYECTO)
 
 daemon:
-	sudo cp $(DAEMON_SCRIPT) $(DAEMONDIR)
+	if [ ! -f $(DAEMONDIR)/$(DAEMON_SCRIPT) ]; then \
+		sudo cp $(DAEMON_SCRIPT) $(DAEMONDIR); \
+	fi; \
 	sudo systemctl enable servidor_rtcc.service
+	sudo systemctl start servidor_rtcc.service
 	
 clean: 
 	rm -f *.o $(PROYECTO)

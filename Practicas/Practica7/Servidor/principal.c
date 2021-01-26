@@ -15,7 +15,7 @@ int fin, leer, escribir;
 pthread_t tid;
 
 int main(int argc, char **argv){
-	int cliente_sockfd, pipefd[2];
+	int sockfd, cliente_sockfd, pipefd[2];
 	struct sockaddr_in direccion_servidor;
 	pid_t pid;
 	
@@ -25,7 +25,7 @@ int main(int argc, char **argv){
 
 	ini_demonio();
 	ini_signals();
-	ini_servidor( &direccion_servidor );
+	ini_servidor( &sockfd, &direccion_servidor );
 	
 	if( pipe( pipefd ) == -1 ){
 		syslog(LOG_ERR, "Error al crear la tuberia...");
@@ -45,8 +45,7 @@ int main(int argc, char **argv){
 			atiende_cliente( cliente_sockfd , pipefd );
 	}
 
-	pthread_join( tid, NULL );
-	syslog( LOG_INFO, "Concluimos ejecución del Hilo");
+	pthread_join( tid, NULL);
 	
 	close( sockfd );
 

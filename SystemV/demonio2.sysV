@@ -1,0 +1,30 @@
+#!/bin/bash
+
+USER=`whoami`
+
+case $1 in
+	start)
+		echo "Levantando demonio"
+		/usr/local/bin/mi_demonio
+	;;
+	stop)
+		MI_PID=$(cat /home/$USER/demonio.pid)
+
+		echo "Deteniendo demonio $MI_PID..."
+		kill -TERM $MI_PID
+	;;
+	status)
+		MI_PID=$(cat /home/$USER/demonio.pid)
+
+		if [ -d /proc/$MI_PID ] ; then
+			echo "Demonio $MI_PID corriendo (ok)"
+		else
+			echo "Demonio $MI_PID no esta corriendo"
+		fi
+	;;
+	*)
+	echo "Sintaxis de ejecucion: $0 [start|stops|tatus]"
+	;;
+esac
+
+exit 0

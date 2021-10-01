@@ -1,0 +1,53 @@
+#!/bin/bash
+
+USER=`whoami`
+PATH_PID=/home/$USER/demonio.pid
+
+verifica() {
+	if [ -e $PATH_PID ] ; then
+		MI_PID=$(cat $PATH_PID)
+
+		if [ -d /proc/$MI_PID ] ; then
+			echo "Existe"
+			return 0
+		fi
+	fi
+	echo "No existe"
+	return 1
+}
+
+case $1 in
+	start)
+		if verifica ; then
+			MI_PID=$(cat $PATH_PID)
+			echo "Demonio $MI_PID en ejecucion, no es necesario iniciarlo ..."
+		else
+			echo "Iniciando demonio ..."
+			/usr/local/bin/mi_demonio
+		fi
+	;;
+	stop)
+		if verifica ; then
+			MI_PID=$(cat $PATH_PID)
+
+			echo "Deteniendo demonio $MI_PID..."
+			kill -SIGTERM $MI_PID
+		else
+			echo "El demonio no esta en ejecucion, no es necesario detenerlo ... "
+		fi
+	;;
+	status)
+		if verifica ; then
+			MI_PID=$(cat $PATH_PID)
+
+			echo "Demonio $MI_PID en ejecucion (ok)"
+		else
+			echo "Demonio no esta en ejecucion ... "
+		fi
+	;;
+	*)
+	echo "Sintaxis de ejecucion: $0 [start|stop|status]"
+	;;
+esac
+
+exit 0

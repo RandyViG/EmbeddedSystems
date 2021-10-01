@@ -1,6 +1,6 @@
 # Embedded Systems
 ## Escuela Superior de Cómputo|Escom
-*Profesor: Victor Hugo García Ortega
+*Profesor: Victor Hugo García Ortega*
 
 Este repositorio contiene los códigos, prácticas elaborados en la materia *Embedded Systems* donde se enseña como programar un System on Chip (SoC) basado en un procesador ARM con sistema operativo linux. 
 
@@ -8,7 +8,7 @@ Este repositorio contiene los códigos, prácticas elaborados en la materia *Emb
 
 **Lenguaje de Programación: C**
 
-##Prácticas
+## Prácticas
 1. Crear archivo Makefile
 2. Repaso de Procesos
 3. Repaso de Hilos
